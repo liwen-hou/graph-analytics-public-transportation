@@ -146,20 +146,47 @@ def read_bus_stop_file(filename):
 	global lines, bus_stops
 	with open (filename) as stop_file:
 		reader = csv.DictReader(stop_file)
+		all_stops = defaultdict(list)
 		for row in reader:
 			
 			if row['Node'].isdigit() and len(row['Node']) == 4:
 				row['Node'] = '0' + row['Node']
 			if row['Node'].isdigit():
-				bus_stops[row['Node']] = dict()
-				bus_stops[row['Node']]['Location'] = row['Info1']
-				bus_stops[row['Node']]['Longitude'] = row['Long']
-				bus_stops[row['Node']]['Latitude'] = row['Lat']
+				all_stops[row['Node']] = dict()
+				all_stops[row['Node']]['Location'] = row['Info1']
+				all_stops[row['Node']]['Longitude'] = row['Long']
+				all_stops[row['Node']]['Latitude'] = row['Lat']
 			if row['Node'].isdigit() == False:
 				mrt_code = list()
 				mrt_code = row['Info1'].split('/')
 				for item in mrt_code:
 						lines[item[:2]].append(row)
+
+	unknown = list()
+	os.chdir('./SBST')
+	for file_name in os.listdir(os.getcwd()):
+		if file_name.endswith('.csv'):
+			with open(file_name) as route:
+				reader2 = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','arr_time','dep_time','last_bus','ID','direction','service_no'])
+				for row in reader2:
+					bus_stops[row['stop_no']] = dict()
+	os.chdir('../SMRT')
+	for file_name in os.listdir(os.getcwd()):
+		if file_name.endswith('.csv'):
+			with open(file_name) as route:
+				reader2 = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','arr_time','dep_time','last_bus','ID','direction','service_no'])
+				for row in reader2:
+					bus_stops[row['stop_no']] = dict()
+	
+	os.chdir('../')
+	for key in bus_stops:
+		if key in all_stops:
+			bus_stops[key]['Location'] = all_stops[key]['Location']
+			bus_stops[key]['Longitude'] = all_stops[key]['Longitude']
+			bus_stops[key]['Latitude'] = all_stops[key]['Latitude']
+		else:
+			unknown.append(key)
+	return unknown
 		
 			
 """
@@ -793,10 +820,6 @@ def connect_post_code(graph):
 -----------------------------Calculate Centrality--------------------------
 """	
 def calculate_centrality(graph):
-	cl_unweighted = gt.closeness(graph)
-	cl_distance = gt.closeness(graph,weight=graph.ep.Distance)
-	bt_unweighted, ep = gt.betweenness(graph)
-	bt_distance, ep = gt.betweenness(graph,weight=graph.ep.Distance)
 	cl_time = gt.closeness(graph,weight=graph.ep.Time)
 	bt_time, ep = gt.betweenness(graph,weight=graph.ep.Time)
 
@@ -806,25 +829,14 @@ def calculate_centrality(graph):
 	f = open('bt_time.txt', 'w+')
 	f = open('bt_time.txt', 'r+')
 	f.writelines(["%s\n" % item  for item in bt_time.a])
-	f = open('cl_unweighted.txt', 'w+')
-	f = open('cl_unweighted.txt', 'r+')
-	f.writelines(["%s\n" % item  for item in cl_unweighted.a])
-	f = open('cl_distance.txt', 'w+')
-	f = open('cl_distance.txt', 'r+')
-	f.writelines(["%s\n" % item  for item in cl_distance.a])
-	f = open('bt_unweighted.txt', 'w+')
-	f = open('bt_unweighted.txt', 'r+')
-	f.writelines(["%s\n" % item  for item in bt_unweighted.a])
-	f = open('bt_distance.txt', 'w+')
-	f = open('bt_distance.txt', 'r+')
-	f.writelines(["%s\n" % item  for item in bt_distance.a])
+	
 
 	with open('results_time.csv','wb') as results:
 		writer = csv.writer(results,delimiter=',')
-		header = ['Name','Type','Longitude','Latitude','Closeness_Unweighted','Closeness_Distance','Betweenness_Unweighted','Betweenness_Distance','Closeness_Time','Betweenness_Time']
+		header = ['Name','Type','Longitude','Latitude','Closeness_Time','Betweenness_Time']
 		writer.writerow(header)
 		for v in graph.vertices():
-			row = [graph.vp.name[v],graph.vp.Type[v],graph.vp.Longitude[v],graph.vp.Latitude[v],cl_unweighted[v],cl_distance[v],bt_unweighted[v],bt_distance[v],cl_time[v],bt_time[v]]
+			row = [graph.vp.name[v],graph.vp.Type[v],graph.vp.Longitude[v],graph.vp.Latitude[v],cl_time[v],bt_time[v]]
 			writer.writerow(row)
 
 
@@ -834,9 +846,8 @@ def calculate_centrality(graph):
 
 if __name__ == '__main__':
 	
-	read_bus_stop_file('info.csv')
+	unknown =read_bus_stop_file('info.csv')
 	#print sorted(lines['NS'],key=lambda k: k['Location'])
-	unknown = find_unknown_node()
 	add_unknown_node(unknown)
 	add_MRT()
 	os.chdir('./ZXPostCode')
@@ -844,6 +855,15 @@ if __name__ == '__main__':
 		if file_name.endswith('.csv'):
 			add_post_code(file_name)
 	os.chdir('../')
+
+	#delete empty stops
+	delete_stop = list()
+	for stop in bus_stops:
+		if not bus_stops[stop]:
+			delete_stop.append(stop)
+	for stop in delete_stop:
+		del bus_stops[stop]
+
 	graph = init_graph()
 	graph = connect_MRT(graph)
 	os.chdir('./SBST')
