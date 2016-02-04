@@ -709,11 +709,14 @@ if __name__ == '__main__':
 		if file_name.endswith('.csv'):
 			add_post_code(file_name)
 	os.chdir('../')
+	delete_stop = list()
 	for stop in bus_stops:
 		if not bus_stops[stop]:
 			print stop
-			del bus_stops[stop]
-			
+			delete_stop.append(stop)
+	for stop in delete_stop:
+		del bus_stops[stop]
+
 	print bus_stops
 
 	graph = init_graph()
