@@ -177,6 +177,7 @@ def read_bus_stop_file(filename):
 				reader2 = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','arr_time','dep_time','last_bus','ID','direction','service_no'])
 				for row in reader2:
 					bus_stops[row['stop_no']] = dict()
+	
 	os.chdir('../')
 	for key in bus_stops:
 		if key in all_stops:
@@ -701,7 +702,6 @@ if __name__ == '__main__':
 	unknown = read_bus_stop_file('info.csv')
 	#print sorted(lines['NS'],key=lambda k: k['Location'])
 	print unknown
-	print bus_stops
 	add_unknown_node(unknown)
 	add_MRT()
 	os.chdir('./ZXPostCode')
@@ -709,6 +709,13 @@ if __name__ == '__main__':
 		if file_name.endswith('.csv'):
 			add_post_code(file_name)
 	os.chdir('../')
+	for stop in bus_stops:
+		if not bus_stops[stop]:
+			print stop
+			del bus_stops[stop]
+			
+	print bus_stops
+
 	graph = init_graph()
 
 	os.chdir('./SBST')
