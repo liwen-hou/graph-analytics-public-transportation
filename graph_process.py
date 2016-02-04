@@ -69,42 +69,6 @@ def add_post_code(filename):
 ----------------------------------------------------------------------------------------------------
 """
 
-"""
------------Find bus stops that are in the bus route files but not the bus stop files----------------
-
-def find_unknown_node():
-	busStop = list()
-	with open('info.csv') as stops:
-		reader1 = csv.DictReader(stops)
-		for row in reader1:
-			if row['Node'].isdigit() and len(row['Node']) == 4:
-				row['Node'] = '0' + row['Node']
-			busStop.append(row['Node'])
-
-	unknown = list()
-	os.chdir('./SBST')
-	for file_name in os.listdir(os.getcwd()):
-		if file_name.endswith('.csv'):
-			with open(file_name) as route:
-				reader2 = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','arr_time','dep_time','last_bus','ID','direction','service_no'])
-				for row in reader2:
-					if row['stop_no'] not in busStop and row['stop_no'] not in unknown:
-						unknown.append(row['stop_no'])
-	os.chdir('../SMRT')
-	for file_name in os.listdir(os.getcwd()):
-		if file_name.endswith('.csv'):
-	        with open(file_name) as route:
-	                reader2 = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','arr_time','dep_time','last_bus','ID','direction','service_no'])
-	                for row in reader2:
-	                        if row['stop_no'] not in busStop and row['stop_no'] not in unknown:
-	                                unknown.append(row['stop_no'])
-	os.chdir('../')
-
-	return unknown
-
-
-----------------------------------------------------------------------------------------------------
-"""
 
 """
 --------------------------------Add the unknown stops to the graph---------------------------------------------
@@ -701,7 +665,6 @@ if __name__ == '__main__':
 	
 	unknown = read_bus_stop_file('info.csv')
 	#print sorted(lines['NS'],key=lambda k: k['Location'])
-	print unknown
 	add_unknown_node(unknown)
 	add_MRT()
 	os.chdir('./ZXPostCode')
@@ -709,15 +672,15 @@ if __name__ == '__main__':
 		if file_name.endswith('.csv'):
 			add_post_code(file_name)
 	os.chdir('../')
+
+	#delete empty stops
 	delete_stop = list()
 	for stop in bus_stops:
 		if not bus_stops[stop]:
-			print stop
 			delete_stop.append(stop)
 	for stop in delete_stop:
 		del bus_stops[stop]
 
-	print bus_stops
 
 	graph = init_graph()
 
