@@ -173,10 +173,10 @@ def read_bus_stop_file(filename):
 	os.chdir('../SMRT')
 	for file_name in os.listdir(os.getcwd()):
 		if file_name.endswith('.csv'):
-		    with open(file_name) as route:
-                reader2 = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','arr_time','dep_time','last_bus','ID','direction','service_no'])
-                for row in reader2:
-                    bus_stops[row['stop_no']] = dict()
+			with open(file_name) as route:
+				reader2 = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','arr_time','dep_time','last_bus','ID','direction','service_no'])
+					for row in reader2:
+						bus_stops[row['stop_no']] = dict()
 	os.chdir('../')
 	for key in bus_stops:
 		if key in all_stops:
@@ -703,7 +703,7 @@ if __name__ == '__main__':
 	unknown = read_bus_stop_file('info.csv')
 	#print sorted(lines['NS'],key=lambda k: k['Location'])
 	print unknown
-	
+
 	add_unknown_node(unknown)
 	add_MRT()
 	os.chdir('./ZXPostCode')
