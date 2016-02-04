@@ -338,12 +338,12 @@ def connect_bus_MRT(graph):
 					
 				edge1 = graph.add_edge(nodes[mrt]['Index'],nodes[bus]['Index'])
 				edge2 = graph.add_edge(nodes[bus]['Index'],nodes[mrt]['Index'])
-				graph.ep.Distance[edge1] = dist
+				graph.ep.Distance[edge1] = dist * 1.5
 				graph.ep.Method[edge1] = 'Walking'
-				graph.ep.Time[edge1] = round(dist/5*60,3)
-				graph.ep.Distance[edge2] = dist
+				graph.ep.Time[edge1] = round(dist*1.5/5*60,3)
+				graph.ep.Distance[edge2] = dist * 1.5
 				graph.ep.Method[edge2] = 'Walking'
-				graph.ep.Time[edge2] = round(dist/5*60,3)
+				graph.ep.Time[edge2] = round(dist*1.5/5*60,3)
 	return graph	
 
 """
@@ -774,11 +774,11 @@ def connect_post_code(graph):
 			dist = round(haversine(lon1,lat1,lon2,lat2),3)
 			if dist < 0.2:
 				edge = graph.add_edge(nodes[item]['Index'],nodes[stop]['Index'])
-				graph.ep.Distance[edge] = dist
+				graph.ep.Distance[edge] = dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
 				graph.ep.Time[edge] = round(dist/5*60,3)
 				edge = graph.add_edge(nodes[stop]['Index'],nodes[item]['Index'])
-				graph.ep.Distance[edge] = dist
+				graph.ep.Distance[edge] = dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
 				graph.ep.Time[edge] = round(dist/5*60,3)
 				connected += 1
@@ -791,26 +791,26 @@ def connect_post_code(graph):
 			dist = round(haversine(lon1,lat1,lon2,lat2),3)
 			if dist < 0.2:
 				edge = graph.add_edge(nodes[item]['Index'],nodes[mrt]['Index'])
-				graph.ep.Distance[edge] = dist
+				graph.ep.Distance[edge] = dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
-				graph.ep.Time[edge] = round(dist/5*60,3)
+				graph.ep.Time[edge] = round(dist*1.5/5*60,3)
 				edge = graph.add_edge(nodes[mrt]['Index'],nodes[item]['Index'])
-				graph.ep.Distance[edge] = dist
+				graph.ep.Distance[edge] = dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
-				graph.ep.Time[edge] = round(dist/5*60,3)
+				graph.ep.Time[edge] = round(dist*1.5/5*60,3)
 				connected += 1
 			elif dist < min_dist:
 				min_dist = dist
 				min_stn = mrt
 		if connected == 0:
 				edge = graph.add_edge(nodes[item]['Index'],nodes[min_stn]['Index'])
-				graph.ep.Distance[edge] = min_dist
+				graph.ep.Distance[edge] = min_dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
-				graph.ep.Time[edge] = round(min_dist/5*60,3)
+				graph.ep.Time[edge] = round(min_dist*1.5/5*60,3)
 				edge = graph.add_edge(nodes[min_stn]['Index'],nodes[item]['Index'])
-				graph.ep.Distance[edge] = min_dist
+				graph.ep.Distance[edge] = min_dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
-				graph.ep.Time[edge] = round(min_dist/5*60,3)
+				graph.ep.Time[edge] = round(min_dist*1.5/5*60,3)
 
 	return graph
 """
