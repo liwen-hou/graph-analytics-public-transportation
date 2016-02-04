@@ -185,8 +185,6 @@ def read_bus_stop_file(filename):
 			bus_stops[key]['Latitude'] = all_stops[key]['Latitude']
 		else:
 			unknown.append(key)
-
-	print unknown
 	return unknown
 		
 			
@@ -703,7 +701,7 @@ if __name__ == '__main__':
 	unknown = read_bus_stop_file('info.csv')
 	#print sorted(lines['NS'],key=lambda k: k['Location'])
 	print unknown
-
+	print bus_stops
 	add_unknown_node(unknown)
 	add_MRT()
 	os.chdir('./ZXPostCode')
