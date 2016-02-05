@@ -880,6 +880,6 @@ if __name__ == '__main__':
 	graph = connect_bus_MRT(graph)
 	graph = connect_post_code(graph)
 	os.chdir('./all_results')
-	graph.save('w_time_sg_graph.graphml')
+	graph.save('w_time_adjusted_sg_graph.graphml')
 
 	#calculate_centrality(graph)

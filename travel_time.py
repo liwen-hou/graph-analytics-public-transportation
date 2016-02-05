@@ -271,7 +271,7 @@ def read_route_file(filename, g):
 							arr_time2 = int(next_row['dep_time'])
 							min2 = arr_time2/100*60 + arr_time2%100
 							min1 = arr_time1/100*60 + arr_time1%100
-						g.ep.Time[edge] = (min2 - min1) * 2
+						g.ep.Time[edge] = (min2 - min1)
 					else:
 						edge = g.edge(a,b)
 						g.ep.Method[edge] += ' ' + current_row['service_no']
@@ -304,7 +304,7 @@ def read_route_file(filename, g):
 							arr_time2 = int(next_row['dep_time'])
 							min2 = arr_time2/100*60 + arr_time2%100
 							min1 = arr_time1/100*60 + arr_time1%100
-						g.ep.Time[edge] = (min2 - min1) * 2
+						g.ep.Time[edge] = (min2 - min1)
 						
 					else:
 						edge = g.edge(a,b)
@@ -880,6 +880,6 @@ if __name__ == '__main__':
 	graph = connect_bus_MRT(graph)
 	graph = connect_post_code(graph)
 	os.chdir('./all_results')
-	graph.save('w_time_sg_graph.graphml')
+	graph.save('w_time_unadjusted_sg_graph.graphml')
 
 	#calculate_centrality(graph)

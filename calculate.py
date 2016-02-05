@@ -14,14 +14,14 @@ def calculate_centrality(graph):
 	print 'calculate betweenness'
 	bt_time, ep = gt.betweenness(graph,weight=graph.ep.Time)
 
-	f = open('cl_time.txt', 'w+')
-	f = open('cl_time.txt', 'r+')
+	f = open('cl_time_unadjusted.txt', 'w+')
+	f = open('cl_time_unadjusted.txt', 'r+')
 	f.writelines(["%s\n" % item  for item in cl_time.a])
-	f = open('bt_time.txt', 'w+')
-	f = open('bt_time.txt', 'r+')
+	f = open('bt_time_unadjusted.txt', 'w+')
+	f = open('bt_time_unadjusted.txt', 'r+')
 	f.writelines(["%s\n" % item  for item in bt_time.a])
 
-	with open('results_time.csv','wb') as results:
+	with open('results_time_unadjusted.csv','wb') as results:
 		writer = csv.writer(results,delimiter=',')
 		header = ['Name','Type','Longitude','Latitude','Closeness_Time','Betweenness_Time']
 		writer.writerow(header)
@@ -31,7 +31,7 @@ def calculate_centrality(graph):
 
 if __name__ == '__main__':
 
-	graph = load_graph('w_time_sg_graph.graphml')
+	graph = load_graph('w_time_unadjusted_sg_graph.graphml')
 	print 'graph loaded'
 	e = graph.edge(27752,50854)
 	graph.ep.Time[e] = 19
@@ -52,9 +52,9 @@ if __name__ == '__main__':
 			print e, ' ', graph.ep.Time[e], ' ', graph.ep.Method[e],' ', graph.ep.Distance[e]
 			graph.ep.Time[e] = 2
 	print 'time adjusted'
-	graph.save('w_time_sg_graph.graphml')
+	graph.save('w_time_sg_unadjusted_graph.graphml')
 	print 'graph saved'
-	graph = load_graph('w_time_sg_graph.graphml')
+	graph = load_graph('w_time_unadjusted_sg_graph.graphml')
 	print 'graph reloaded'
 	for e in graph.edges():
                 if graph.ep.Time[e] < 0:
