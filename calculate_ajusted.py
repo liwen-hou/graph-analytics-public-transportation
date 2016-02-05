@@ -50,7 +50,7 @@ if __name__ == '__main__':
 	for e in graph.edges():
 		if graph.ep.Time[e] < 0:
 			print e, ' ', graph.ep.Time[e], ' ', graph.ep.Method[e],' ', graph.ep.Distance[e]
-			graph.ep.Time[e] = 2
+			graph.ep.Time[e] = 4
 	print 'time adjusted'
 	graph.save('w_time_sg_graph.graphml')
 	print 'graph saved'
