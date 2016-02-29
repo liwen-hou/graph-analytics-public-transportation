@@ -31,7 +31,7 @@ def calculate_centrality(graph):
 
 if __name__ == '__main__':
 
-	graph = load_graph('w_time_unadjusted_sg_graph.graphml')
+	graph = load_graph('no_mrt.graphml')
 	print 'graph loaded'
 	# e = graph.edge(27752,50854)
 	# graph.ep.Time[e] = 19
