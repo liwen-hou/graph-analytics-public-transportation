@@ -14,14 +14,14 @@ def calculate_centrality(graph):
 	print 'calculate betweenness'
 	bt_time, ep = gt.betweenness(graph,weight=graph.ep.Time)
 
-	f = open('cl_time_unadjusted.txt', 'w+')
-	f = open('cl_time_unadjusted.txt', 'r+')
+	f = open('cl_no_mrt.txt', 'w+')
+	f = open('cl_no_mrt.txt', 'r+')
 	f.writelines(["%s\n" % item  for item in cl_time.a])
-	f = open('bt_time_unadjusted.txt', 'w+')
-	f = open('bt_time_unadjusted.txt', 'r+')
+	f = open('bt_no_mrt.txt', 'w+')
+	f = open('bt_no_mrt.txt', 'r+')
 	f.writelines(["%s\n" % item  for item in bt_time.a])
 
-	with open('results_time_unadjusted.csv','wb') as results:
+	with open('results_no_mrt.csv','wb') as results:
 		writer = csv.writer(results,delimiter=',')
 		header = ['Name','Type','Longitude','Latitude','Closeness_Time','Betweenness_Time']
 		writer.writerow(header)
@@ -33,30 +33,32 @@ if __name__ == '__main__':
 
 	graph = load_graph('no_mrt.graphml')
 	print 'graph loaded'
-	# e = graph.edge(27752,50854)
-	# graph.ep.Time[e] = 19
-	# e = graph.edge(34494,4816)
- #        graph.ep.Time[e] = 30
-	# e = graph.edge(36011,31250)
- #        graph.ep.Time[e] = 13
-	# e = graph.edge(55605,107841)
- #        graph.ep.Time[e] = 7
-	# e = graph.edge(85227,4816)
- #        graph.ep.Time[e] = 13
-	# e = graph.edge(97669,77485)
- #        graph.ep.Time[e] = 7
-	# e = graph.edge(125822,45118)
- #        graph.ep.Time[e] = 7
+	e = graph.edge(27708, 50784)
+	graph.ep.Time[e] = 19
+	e = graph.edge(34443, 4809)
+        graph.ep.Time[e] = 30
+	e = graph.edge(35959, 3795)
+        graph.ep.Time[e] = 13
+	e = graph.edge(52581, 3795)
+        graph.ep.Time[e] = 14
+	e = graph.edge(55528, 107676)
+        graph.ep.Time[e] = 7
+	e = graph.edge(85097, 4809)
+        graph.ep.Time[e] = 22
+	e = graph.edge(97522, 77382)
+        graph.ep.Time[e] = 6 
+	e = graph.edge(125627, 45055)
+        graph.ep.Time[e] = 7
 	for e in graph.edges():
 		if graph.ep.Time[e] < 0:
 			print e, ' ', graph.ep.Time[e], ' ', graph.ep.Method[e],' ', graph.ep.Distance[e]
-			# graph.ep.Time[e] = 2
-	# print 'time adjusted'
-	# graph.save('w_time_sg_unadjusted_graph.graphml')
-	# print 'graph saved'
-	# graph = load_graph('w_time_unadjusted_sg_graph.graphml')
-	# print 'graph reloaded'
-	# for e in graph.edges():
- #                if graph.ep.Time[e] < 0:
- #                        print e, ' ', graph.ep.Time[e], ' ', graph.ep.Method[e],' ', graph.ep.Distance[e]
-	# calculate_centrality(graph)
+			graph.ep.Time[e] = 2
+	print 'time adjusted'
+	graph.save('no_mrt.graphml')
+	print 'graph saved'
+	graph = load_graph('no_mrt.graphml')
+	print 'graph reloaded'
+	for e in graph.edges():
+                if graph.ep.Time[e] < 0:
+                        print e, ' ', graph.ep.Time[e], ' ', graph.ep.Method[e],' ', graph.ep.Distance[e]
+	calculate_centrality(graph)
