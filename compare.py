@@ -11,6 +11,8 @@ def compare():
 		reader1 = csv.DictReader(no_mrt,fieldnames = ['name','lon','lat','mrt','cl','dist'])
 		reader2 = csv.DictReader(with_mrt,fieldnames = ['name','lon','lat','mrt','cl','dist'])
 		for row1, row2 in izip(reader1,reader2):
+			print row1
+			print row2
 			if row1['name'] != row2['name']:
 				print 'terminated'
 				return
