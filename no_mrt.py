@@ -727,12 +727,12 @@ def init_graph():
 		nodes[items]['Location'] = bus_stops[items]['Location']
 		nodes[items]['Longitude'] = bus_stops[items]['Longitude']
 		nodes[items]['Latitude'] = bus_stops[items]['Latitude']
-	# for items in mrts:
-	# 	nodes[items] = dict()
-	# 	nodes[items]['Type'] = 'MRT Stop'
-	# 	nodes[items]['Location'] = mrts[items]['Location']
-	# 	nodes[items]['Longitude'] = mrts[items]['Longitude']
-	# 	nodes[items]['Latitude'] = mrts[items]['Latitude']
+	for items in mrts:
+		nodes[items] = dict()
+		nodes[items]['Type'] = 'MRT Stop'
+		nodes[items]['Location'] = mrts[items]['Location']
+		nodes[items]['Longitude'] = mrts[items]['Longitude']
+		nodes[items]['Latitude'] = mrts[items]['Latitude']
 	for items in posts:
 		nodes[items] = dict()
 		nodes[items]['Type'] = 'Post Code'
@@ -785,23 +785,23 @@ def connect_post_code(graph):
 			elif dist < min_dist:
 				min_dist = dist
 				min_stn = stop
-		# for mrt in mrts:
-		# 	lat2 = float(mrts[mrt]['Latitude'])
-		# 	lon2 = float(mrts[mrt]['Longitude'])
-		# 	dist = round(haversine(lon1,lat1,lon2,lat2),3)
-		# 	if dist < 0.2:
-		# 		edge = graph.add_edge(nodes[item]['Index'],nodes[mrt]['Index'])
-		# 		graph.ep.Distance[edge] = dist * 1.5
-		# 		graph.ep.Method[edge] = 'Walking'
-		# 		graph.ep.Time[edge] = round(dist*1.5/5*60,3)
-		# 		edge = graph.add_edge(nodes[mrt]['Index'],nodes[item]['Index'])
-		# 		graph.ep.Distance[edge] = dist * 1.5
-		# 		graph.ep.Method[edge] = 'Walking'
-		# 		graph.ep.Time[edge] = round(dist*1.5/5*60,3)
-		# 		connected += 1
-		# 	elif dist < min_dist:
-		# 		min_dist = dist
-		# 		min_stn = mrt
+		for mrt in mrts:
+			lat2 = float(mrts[mrt]['Latitude'])
+			lon2 = float(mrts[mrt]['Longitude'])
+			dist = round(haversine(lon1,lat1,lon2,lat2),3)
+			if dist < 0.2:
+				edge = graph.add_edge(nodes[item]['Index'],nodes[mrt]['Index'])
+				graph.ep.Distance[edge] = dist * 1.5
+				graph.ep.Method[edge] = 'Walking'
+				graph.ep.Time[edge] = round(dist*1.5/5*60,3)
+				edge = graph.add_edge(nodes[mrt]['Index'],nodes[item]['Index'])
+				graph.ep.Distance[edge] = dist * 1.5
+				graph.ep.Method[edge] = 'Walking'
+				graph.ep.Time[edge] = round(dist*1.5/5*60,3)
+				connected += 1
+			elif dist < min_dist:
+				min_dist = dist
+				min_stn = mrt
 		if connected == 0:
 				edge = graph.add_edge(nodes[item]['Index'],nodes[min_stn]['Index'])
 				graph.ep.Distance[edge] = min_dist * 1.5
@@ -877,7 +877,7 @@ if __name__ == '__main__':
 	os.chdir('../')
 
 	
-	# graph = connect_bus_MRT(graph)
+	graph = connect_bus_MRT(graph)
 	graph = connect_post_code(graph)
 	os.chdir('./all_results')
 	graph.save('no_mrt.graphml')
