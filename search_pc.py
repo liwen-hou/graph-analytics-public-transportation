@@ -59,7 +59,7 @@ def find_postcode(filename, db):
             command = 'INSERT INTO hdb (floor,age,size,price,rooms,block,postcode) VALUES ('
             command = command + str(flr) + ',' + row['age'] + ',' + row['size'] + ',' + row['price'] + ',' + row['rooms'] + ',"' + row['addr'] + '",' + str(pc) + ')'
             print command
-
+            cur.execute(command)
 if __name__ == '__main__':
 
     db = init_db()
