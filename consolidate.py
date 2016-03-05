@@ -20,10 +20,11 @@ def combine(db):
 	cur = db.cursor()
 	command = 'SELECT h.postcode, p.lon, p.lat, h.block, h.floor, h.age, h.size, h.price, h.rooms, p.clt, p.cld, p.clg,mt.mrt1, mt.dist1, mt.mrt2, mt.dist2, mt.mrt3, mt.dist3, sh.school1, sh.dist1, sh.school2, sh.dist2, sh.school3, sh.dist3, ml.mall1, ml.dist1, ml.mall2, ml.dist2, ml.mall3, ml.dist3 '
 	command = command + 'FROM hdb h, postcode p, nearschool sh, nearmrt mt, nearmall ml '
-	command = command + 'WHERE h.postcode = p.name AND h.postcode = sh.postcode AND h.postcode = ml.postcode AND h.postcode = mt.postcode'
-	cur.execute(command)
-	for row in cur.fetchall():
-		print row
+	command = command + 'WHERE h.postcode = p.name AND h.postcode = sh.postcode AND h.postcode = ml.postcode AND h.postcode = mt.postcode '
+	command = command + "INTO OUTFILE '/tmp/orders.csv' FIELDS TERMINATED BY ','ENCLOSED BY '" +'"' + "' LINES TERMINATED BY '" + '\' + "n'"
+	print command
+	#cur.execute(command)
+
 
 
 
