@@ -5,6 +5,7 @@ import os, sys
 from collections import defaultdict
 from math import radians, cos, sin, asin, sqrt
 import operator
+import MySQLdb
 
 def haversine(lon1, lat1, lon2, lat2):
 	"""
@@ -20,17 +21,31 @@ def haversine(lon1, lat1, lon2, lat2):
 	c = 2 * asin(sqrt(a))
 	km = 6367 * c
 	return km
+def init_db():
+    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
+                         user="root",         # your username
+                         passwd="LZXihpc12",  # your password
+                         db="HDBPrice")        # name of the data base
+    return db
 
-
-def find_postcode(filename):
+def find_postcode(filename,db):
 
     with open(filename) as hdb:
         reader = csv.DictReader(hdb)
         for row in reader:
             addr = row['Address'].split(' ')
-            print addr[0]
+            if addr[0].isdigit():
+                if len(addr[0]) != 3:
+                    for i in range(0,3-len(addr[0])):
+                        addr[0] = '0' + addr[0]
+            else:
+                addr[0] = addr[0][:-1]
+                if len(addr[0]) != 3:
+                    for i in range(0,3-len(addr[0])):
+                        addr[0] = '0' + addr[0]
 
 
 if __name__ == '__main__':
 
-    find_postcode('AMK_done.csv')
+    db = init_db()
+    find_postcode('AMK_done.csv',db)
