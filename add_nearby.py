@@ -34,11 +34,6 @@ def add_mall(db):
     command = 'SELECT m.name, m.postcode, p.lat, p.lon FROM mall m, postcode p '
 	command = command + 'WHERE m.postcode = p.name'
 	print command
-            try:
-                cur.execute(command)
-                db.commit()
-            except:
-                db.rollback()
 if __name__ == '__main__':
 
     db = init_db()
