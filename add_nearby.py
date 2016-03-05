@@ -48,9 +48,11 @@ def add_mall(db):
 			#print lon2, ' ', lat2
 			dist = haversine(lon1, lat1, lon2, lat2)
 			mall = dict()
-			mall[row[0]] = dist
+			mall['name'] = row[0]
+			mall['dist'] = dist
 			dists.append(mall)
-		print dists
+		dists = sorted(dists, key=lambda k: k['dist'])
+		print dists[0],' ',dists[1],' ',dists[2] 
 
 
 if __name__ == '__main__':
