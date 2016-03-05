@@ -31,7 +31,6 @@ def init_db():
 	return db
 
 def add_mall(db):
-	dists = list()
 	cur1 = db.cursor()
 	cur2 = db.cursor()
 	command1 = 'SELECT h.postcode, p.lon, p.lat FROM hdb h, postcode p WHERE h.postcode = p.name'
@@ -39,6 +38,7 @@ def add_mall(db):
 	command2 = command2 + 'WHERE m.postcode = p.name'
 	cur1.execute(command1)
 	for row in cur1.fetchall():
+		dists = list()
 		lon1 = row[1]
 		lat1 = row[2]
 		#print lon1, ' ', lat1
