@@ -50,23 +50,31 @@ def find_postcode(filename, db):
             cur.execute(command)
             for result in cur.fetchall():
                 temp = result[0].split(',')
-                if (addr[2] in temp[0].upper() and addr[1] in temp[0].upper()) or (addr[2] in temp[1].upper() and addr[1] in temp[1].upper()):
-                    if addr[0] == temp[1][1:] or addr[0] == temp[2][1:]:
-                         pc = result[1]
+                if len(addr) > 2:
+                    if (addr[2] in temp[0].upper() and addr[1] in temp[0].upper()) or (addr[2] in temp[1].upper() and addr[1] in temp[1].upper()):
+                        if addr[0] == temp[1][1:] or addr[0] == temp[2][1:]:
+                            pc = result[1]
+                            print pc
+                else:
+                    if (addr[1] in temp[0].upper()) or (addr[1] in temp[1].upper()):
+                        if addr[0] == temp[1][1:] or addr[0] == temp[2][1:]:
+                            pc = result[1]
+                            print pc
             flr = row['floor'].split(' ')
             flr = (int(flr[0]) + int(flr[2]))/2
             command = 'INSERT INTO hdb (floor,age,size,price,rooms,block,postcode) VALUES ('
             command = command + str(flr) + ',' + row['age'] + ',' + row['size'] + ',' + row['price'] + ',' + row['rooms'] + ',"' + row['addr'] + '",' + str(pc) + ')'
-            try:
-                cur.execute(command)
-                db.commit()
-            except:
-                db.rollback()
+            # try:
+            #     cur.execute(command)
+            #     db.commit()
+            # except:
+            #     db.rollback()
 if __name__ == '__main__':
 
     db = init_db()
     os.chdir('./HDBPriceFor2013')
-    for file_name in os.listdir(os.getcwd()):
-        if file_name.endswith('.csv'):
-            find_postcode(file_name, db)
+    find_postcode('Queenstown_done.csv',db)
+    # for file_name in os.listdir(os.getcwd()):
+    #     if file_name.endswith('.csv'):
+    #         find_postcode(file_name, db)
     db.close()
