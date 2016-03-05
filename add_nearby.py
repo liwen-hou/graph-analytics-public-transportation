@@ -43,7 +43,7 @@ def add_mall(db):
 		lat1 = row[2]
 		#print lon1, ' ', lat1
 		cur2.execute(command2)
-		print row[0]
+		pc = row[0]
 		for row in cur2.fetchall():
 			#print row
 			lon2 = row[1]
@@ -56,7 +56,9 @@ def add_mall(db):
 			#print mall
 			dists.append(mall)
 		st = sorted(dists, key=itemgetter('dist'))
-		print st[0],' ',st[1],' ',st[2]
+		command3 = 'INSERT INTO nearmall (postcode,mall1,dist1,mall2,dist2,mall3,dist3) VALUES ('
+		command3 = command3 + str(pc) + ',"' + st[0]['name'] + '",' + str(st[0]['dist']) + ',"' + st[1]['name'] + '",' + str(st[1]['dist']) + ',"' + st[2]['name'] + '",' + str(st[2]['dist']) + ')'
+		print command3
 
 
 if __name__ == '__main__':
