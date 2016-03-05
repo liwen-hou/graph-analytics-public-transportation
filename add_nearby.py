@@ -34,21 +34,21 @@ def add_mall(db):
 	cur1 = db.cursor()
 	cur2 = db.cursor()
 	command1 = 'SELECT h.postcode, p.lon, p.lat FROM hdb h, postcode p WHERE h.postcode = p.name'
-	command2 = 'SELECT m.name, m.postcode, p.lon, p.lat FROM mall m, postcode p '
+	command2 = 'SELECT m.name, p.lon, p.lat FROM mall m, postcode p '
 	command2 = command2 + 'WHERE m.postcode = p.name'
 	cur1.execute(command1)
 	for row in cur1.fetchall():
 		lon1 = row[1]
 		lat1 = row[2]
-		print lon1, ' ', lat1
+		#print lon1, ' ', lat1
 		cur2.execute(command2)
 		for row in cur2.fetchall():
 			lon2 = row[1]
 			lat2 = row[2]
-			print lon2, ' ', lat2
+			#print lon2, ' ', lat2
 			dist = haversine(lon1, lat1, lon2, lat2)
 			dists[row[0]] = dist
-		#print dists
+		print dists
 
 
 if __name__ == '__main__':
