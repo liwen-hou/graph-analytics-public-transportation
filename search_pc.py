@@ -28,11 +28,12 @@ def init_db():
                          db="HDBPrice")        # name of the data base
     return db
 
-def find_postcode(filename,db):
-
+def find_postcode(filename, db):
+    cur = db.cursor()
     with open(filename) as hdb:
         reader = csv.DictReader(hdb)
         for row in reader:
+            print row['Address']
             addr = row['Address'].split(' ')
             if addr[0].isdigit():
                 if len(addr[0]) != 3:
@@ -43,9 +44,14 @@ def find_postcode(filename,db):
                 if len(addr[0]) != 3:
                     for i in range(0,3-len(addr[0])):
                         addr[0] = '0' + addr[0]
+                        cur.execute('SELECT * FROM address' +
+                                    'WHERE postcode LIKE "%' + addr[0] + '"')
+                        for row in cur.fetchall():
+                            print row
 
 
 if __name__ == '__main__':
 
     db = init_db()
-    find_postcode('AMK_done.csv',db)
+    os.chdir('./HDBPriceFor2013')
+    find_postcode('AMK_done.csv', db)
