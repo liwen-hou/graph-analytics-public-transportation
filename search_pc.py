@@ -49,11 +49,11 @@ def find_postcode(filename, db):
                         tail = '0' + tail
             command = 'SELECT * FROM address ' + 'WHERE postcode LIKE "%' + tail + '"'
             cur.execute(command)
-            for row in cur.fetchall():
-                temp = row[0].split(',')
+            for result in cur.fetchall():
+                temp = result[0].split(',')
                 if (addr[2] in temp[0].upper() and addr[1] in temp[0].upper()) or (addr[2] in temp[1].upper() and addr[1] in temp[1].upper()):
                     if addr[0] == temp[1][1:] or addr[0] == temp[2][1:]:
-                         print row[1]
+                         print result[1]
 
 
 if __name__ == '__main__':
