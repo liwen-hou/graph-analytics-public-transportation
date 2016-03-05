@@ -35,7 +35,7 @@ def add_mall(db):
 	cur2 = db.cursor()
 	command1 = 'SELECT h.postcode, p.lon, p.lat FROM hdb h, postcode p WHERE h.postcode = p.name'
 	command2 = 'SELECT m.name, m.postcode, p.lon, p.lat FROM mall m, postcode p '
-	command2 = command1 + 'WHERE m.postcode = p.name'
+	command2 = command2 + 'WHERE m.postcode = p.name'
 	cur1.execute(command1)
 	for row in cur1.fetchall():
 		lon1 = row[1]
