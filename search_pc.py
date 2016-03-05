@@ -35,15 +35,16 @@ def find_postcode(filename, db):
         for row in reader:
             print row['Address']
             addr = row['Address'].split(' ')
-            if addr[0].isdigit():
-                if len(addr[0]) != 3:
-                    for i in range(0,3-len(addr[0])):
-                        tail = '0' + addr[0]
+            tail = addr[0]
+            if tail.isdigit():
+                if len(tail) != 3:
+                    for i in range(0,3-len(tail)):
+                        tail = '0' + tail
             else:
-                tail = addr[0][:-1]
-                if len(addr[0]) != 3:
-                    for i in range(0,3-len(addr[0])):
-                        tail = '0' + addr[0]
+                tail = tail[:-1]
+                if len(tail) != 3:
+                    for i in range(0,3-len(tail)):
+                        tail = '0' + tail
             command = 'SELECT * FROM address ' + 'WHERE postcode LIKE "%' + tail + '"'
             print command
             cur.execute(command)
