@@ -35,7 +35,6 @@ def find_postcode(filename, db):
         reader = csv.DictReader(hdb,fieldnames = ['id','date','addr','type','year','age','floor','size','price','psf','rooms','lat','lon'])
         next(reader,None)
         for row in reader:
-            print row['addr']
             addr = row['addr'].split(' ')
             tail = addr[0]
             if tail.isdigit():
@@ -58,7 +57,6 @@ def find_postcode(filename, db):
             flr = (int(flr[0]) + int(flr[2]))/2
             command = 'INSERT INTO hdb (floor,age,size,price,rooms,block,postcode) VALUES ('
             command = command + str(flr) + ',' + row['age'] + ',' + row['size'] + ',' + row['price'] + ',' + row['rooms'] + ',"' + row['addr'] + '",' + str(pc) + ')'
-            print command
             try:
                 cur.execute(command)
                 db.commit()
@@ -68,5 +66,7 @@ if __name__ == '__main__':
 
     db = init_db()
     os.chdir('./HDBPriceFor2013')
-    find_postcode('AMK_done.csv', db)
+    for file_name in os.listdir(os.getcwd()):
+		if file_name.endswith('.csv'):
+            find_postcode(file_name, db)
     db.close()
