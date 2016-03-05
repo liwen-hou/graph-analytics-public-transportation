@@ -54,8 +54,8 @@ def find_postcode(filename, db):
                 if (addr[2] in temp[0].upper() and addr[1] in temp[0].upper()) or (addr[2] in temp[1].upper() and addr[1] in temp[1].upper()):
                     if addr[0] == temp[1][1:] or addr[0] == temp[2][1:]:
                          pc = result[1]
-        command = 'INSERT INTO hdb (floor,age,size,price,rooms,block,postcode) VALUES ('
-        command = command + '"' + row['floor'] + '","' + row['age'] + '","' + row['size'] + '","' + row['price'] + '","' + row['rooms'] + '","' + row['addr'] + '","' + pc + '")'
+            command = 'INSERT INTO hdb (floor,age,size,price,rooms,block,postcode) VALUES ('
+            command = command + '"' + row['floor'] + '","' + row['age'] + '","' + row['size'] + '","' + row['price'] + '","' + row['rooms'] + '","' + row['addr'] + '","' + str(pc) + '")'
 
 
 if __name__ == '__main__':
