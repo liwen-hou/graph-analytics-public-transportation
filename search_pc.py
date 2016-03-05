@@ -1,26 +1,7 @@
-from itertools import tee, izip
 import csv
-import xml.etree.cElementTree as ET
 import os, sys
-from collections import defaultdict
-from math import radians, cos, sin, asin, sqrt
 import operator
 import MySQLdb
-
-def haversine(lon1, lat1, lon2, lat2):
-	"""
-	Calculate the great circle distance between two points
-	on the earth (specified in decimal degrees)
-	"""
-	# convert decimal degrees to radians
-	lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
-	# haversine formula
-	dlon = lon2 - lon1
-	dlat = lat2 - lat1
-	a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-	c = 2 * asin(sqrt(a))
-	km = 6367 * c
-	return km
 
 def init_db():
     db = MySQLdb.connect(host="localhost",    # your host, usually localhost
@@ -36,7 +17,6 @@ def find_postcode(filename, db):
         next(reader,None)
         for row in reader:
             row['addr'] = row['addr'].replace("C'WEALTH",'COMMON WEALTH')
-            print row['addr']
             addr = row['addr'].split(' ')
             tail = addr[0]
             if tail.isdigit():
@@ -56,12 +36,10 @@ def find_postcode(filename, db):
                     if (addr[2] in temp[0].upper() and addr[1] in temp[0].upper()) or (addr[2] in temp[1].upper() and addr[1] in temp[1].upper()):
                         if addr[0] == temp[1][1:] or addr[0] == temp[2][1:]:
                             pc = result[1]
-                            print pc
                 else:
                     if (addr[1] in temp[0].upper()) or (addr[1] in temp[1].upper()):
                         if addr[0] == temp[1][1:] or addr[0] == temp[2][1:]:
                             pc = result[1]
-                            print pc
             flr = row['floor'].split(' ')
             flr = (int(flr[0]) + int(flr[2]))/2
             command = 'INSERT INTO hdb (floor,age,size,price,rooms,block,postcode) VALUES ('
