@@ -59,6 +59,7 @@ def add_mall(db):
 		command3 = 'INSERT INTO nearmall (postcode,mall1,dist1,mall2,dist2,mall3,dist3) VALUES ('
 		command3 = command3 + str(pc) + ',"' + st[0]['name'] + '",' + str(st[0]['dist']) + ',"' + st[1]['name'] + '",' + str(st[1]['dist']) + ',"' + st[2]['name'] + '",' + str(st[2]['dist']) + ')'
 		try:
+			cur = db.cursor()
 			cur.execute(command3)
 			db.commit()
 		except:
