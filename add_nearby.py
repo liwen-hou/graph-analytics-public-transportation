@@ -30,7 +30,7 @@ def init_db():
 	return db
 
 def add_mall(db):
-	dists = defaultdict(list)
+	dists = list()
 	cur1 = db.cursor()
 	cur2 = db.cursor()
 	command1 = 'SELECT h.postcode, p.lon, p.lat FROM hdb h, postcode p WHERE h.postcode = p.name'
@@ -47,7 +47,9 @@ def add_mall(db):
 			lat2 = row[2]
 			#print lon2, ' ', lat2
 			dist = haversine(lon1, lat1, lon2, lat2)
-			dists[row[0]] = dist
+			mall = dict()
+			mall[row[0]] = dist
+			dists.append(mall)
 		print dists
 
 
