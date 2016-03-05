@@ -59,9 +59,14 @@ def find_postcode(filename, db):
             command = 'INSERT INTO hdb (floor,age,size,price,rooms,block,postcode) VALUES ('
             command = command + str(flr) + ',' + row['age'] + ',' + row['size'] + ',' + row['price'] + ',' + row['rooms'] + ',"' + row['addr'] + '",' + str(pc) + ')'
             print command
-            cur.execute(command)
+            try:
+                cur.execute(command)
+                db.commit()
+            except:
+                db.rollback()
 if __name__ == '__main__':
 
     db = init_db()
     os.chdir('./HDBPriceFor2013')
     find_postcode('AMK_done.csv', db)
+    db.close()
