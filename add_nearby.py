@@ -42,6 +42,7 @@ def add_mall(db):
 		lat1 = row[2]
 		#print lon1, ' ', lat1
 		cur2.execute(command2)
+		print row[0]
 		for row in cur2.fetchall():
 			lon2 = row[1]
 			lat2 = row[2]
@@ -52,7 +53,7 @@ def add_mall(db):
 			mall['dist'] = dist
 			dists.append(mall)
 		dists = sorted(dists, key=lambda k: k['dist'])
-		print dists[0],' ',dists[1],' ',dists[2] 
+		print dists[0],' ',dists[1],' ',dists[2]
 
 
 if __name__ == '__main__':
