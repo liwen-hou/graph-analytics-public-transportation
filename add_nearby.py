@@ -23,17 +23,21 @@ def haversine(lon1, lat1, lon2, lat2):
 	return km
 
 def init_db():
-    db = MySQLdb.connect(host="localhost",    # your host, usually localhost
-                         user="root",         # your username
-                         passwd="LZXihpc12",  # your password
-                         db="HDBPrice")        # name of the data base
-    return db
+	db = MySQLdb.connect(host="localhost",    # your host, usually localhost
+	user="root",         # your username
+	passwd="LZXihpc12",  # your password
+	db="HDBPrice")        # name of the data base
+	return db
 
 def add_mall(db):
-    cur = db.cursor()
-    command = 'SELECT m.name, m.postcode, p.lat, p.lon FROM mall m, postcode p '
+	cur = db.cursor()
+	command = 'SELECT m.name, m.postcode, p.lat, p.lon FROM mall m, postcode p '
 	command = command + 'WHERE m.postcode = p.name'
 	print command
+	cur.execute(command)
+	for row in cur.fetchall():
+		print row
+		
 if __name__ == '__main__':
 
     db = init_db()
