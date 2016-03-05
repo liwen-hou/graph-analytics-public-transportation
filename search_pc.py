@@ -67,6 +67,6 @@ if __name__ == '__main__':
     db = init_db()
     os.chdir('./HDBPriceFor2013')
     for file_name in os.listdir(os.getcwd()):
-		if file_name.endswith('.csv'):
+        if file_name.endswith('.csv'):
             find_postcode(file_name, db)
     db.close()
