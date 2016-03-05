@@ -30,14 +30,20 @@ def init_db():
 	return db
 
 def add_mall(db):
-	cur = db.cursor()
-	command = 'SELECT m.name, m.postcode, p.lat, p.lon FROM mall m, postcode p '
-	command = command + 'WHERE m.postcode = p.name'
-	print command
-	cur.execute(command)
+	cur1 = db.cursor()
+	cur2 = db.cursor()
+	command1 = 'SELECT h.postcode, p.lon, p.lat FROM hdb h, postcode p WHERE h.postcode = p.name'
+	command2 = 'SELECT m.name, m.postcode, p.lat, p.lon FROM mall m, postcode p '
+	command2 = command1 + 'WHERE m.postcode = p.name'
+	cur1.execute(command1)
+	for row in cur1.fetchall():
+		print row
+
+
+
 	for row in cur.fetchall():
 		print row
-		
+
 if __name__ == '__main__':
 
     db = init_db()
