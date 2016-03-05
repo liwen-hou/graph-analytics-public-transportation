@@ -21,6 +21,7 @@ def haversine(lon1, lat1, lon2, lat2):
 	c = 2 * asin(sqrt(a))
 	km = 6367 * c
 	return km
+
 def init_db():
     db = MySQLdb.connect(host="localhost",    # your host, usually localhost
                          user="root",         # your username
@@ -31,30 +32,32 @@ def init_db():
 def find_postcode(filename, db):
     cur = db.cursor()
     with open(filename) as hdb:
-        reader = csv.DictReader(hdb)
-        for row in reader:
-            print row['Address']
-            addr = row['Address'].split(' ')
-            tail = addr[0]
-            if tail.isdigit():
-                if len(tail) != 3:
-                    for i in range(0,3-len(tail)):
-                        tail = '0' + tail
-            else:
-                tail = tail[:-1]
-                if len(tail) != 3:
-                    for i in range(0,3-len(tail)):
-                        tail = '0' + tail
-            command = 'SELECT * FROM address ' + 'WHERE postcode LIKE "%' + tail + '"'
-            print command
-            cur.execute(command)
-            for row in cur.fetchall():
-                if addr[0] in row[0].upper() and addr[1] in row[0].upper():
-                    print row
+        reader = csv.DictReader(hdb,fieldnames = ['id','addr','type','year','age','floor','size','price','psf','rooms','lat','lon'])
+        print reader[0]
+        # for row in reader:
+        #     print row['addr']
+        #     addr = row['addr'].split(' ')
+        #     tail = addr[0]
+        #     if tail.isdigit():
+        #         if len(tail) != 3:
+        #             for i in range(0,3-len(tail)):
+        #                 tail = '0' + tail
+        #     else:
+        #         tail = tail[:-1]
+        #         if len(tail) != 3:
+        #             for i in range(0,3-len(tail)):
+        #                 tail = '0' + tail
+        #     command = 'SELECT * FROM address ' + 'WHERE postcode LIKE "%' + tail + '"'
+        #     cur.execute(command)
+        #     for row in cur.fetchall():
+        #         temp = row[0].split(',')
+        #         if (addr[2] in temp[0].upper() and addr[1] in temp[0].upper()) or (addr[2] in temp[1].upper() and addr[1] in temp[1].upper()):
+        #             if addr[0] == temp[1][1:] or addr[0] == temp[2][1:]:
+        #                  print row[1]
 
 
 if __name__ == '__main__':
 
     db = init_db()
     os.chdir('./HDBPriceFor2013')
-    find_postcode('AMK_done.csv', db)
+    find_postcode(':_done.csv', db)
