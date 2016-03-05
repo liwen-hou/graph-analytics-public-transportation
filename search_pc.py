@@ -44,8 +44,10 @@ def find_postcode(filename, db):
                 if len(addr[0]) != 3:
                     for i in range(0,3-len(addr[0])):
                         addr[0] = '0' + addr[0]
-                        cur.execute('SELECT * FROM address' +
-                                    'WHERE postcode LIKE "%' + addr[0] + '"')
+                        command = 'SELECT * FROM address' +
+                                    'WHERE postcode LIKE "%' + addr[0] + '"'
+                        print command
+                        cur.execute(command)
                         for row in cur.fetchall():
                             print row
 
