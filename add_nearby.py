@@ -40,17 +40,16 @@ def add_mall(db):
 	for row in cur1.fetchall():
 		lon1 = row[1]
 		lat1 = row[2]
+		print lon1, ' ', lat1
 		cur2.execute(command2)
 		for row in cur2.fetchall():
 			lon2 = row[1]
 			lat2 = row[2]
+			print lon2, ' ', lat2
 			dist = haversine(lon1, lat1, lon2, lat2)
 			dists[row[0]] = dist
-		print dists
+		#print dists
 
-
-	for row in cur.fetchall():
-		print row
 
 if __name__ == '__main__':
 
