@@ -69,6 +69,42 @@ def add_post_code(filename):
 ----------------------------------------------------------------------------------------------------
 """
 
+"""
+-----------Find bus stops that are in the bus route files but not the bus stop files----------------
+"""
+def find_unknown_node():
+	busStop = list()
+	with open('info.csv') as stops:
+		reader1 = csv.DictReader(stops)
+		for row in reader1:
+			if row['Node'].isdigit() and len(row['Node']) == 4:
+				row['Node'] = '0' + row['Node']
+			busStop.append(row['Node'])
+
+	unknown = list()
+	os.chdir('./SBST')
+	for file_name in os.listdir(os.getcwd()):
+		if file_name.endswith('.csv'):
+			with open(file_name) as route:
+				reader2 = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','arr_time','dep_time','last_bus','ID','direction','service_no'])
+				for row in reader2:
+					if row['stop_no'] not in busStop and row['stop_no'] not in unknown:
+						unknown.append(row['stop_no'])
+	os.chdir('../SMRT')
+	for file_name in os.listdir(os.getcwd()):
+		if file_name.endswith('.csv'):
+		        with open(file_name) as route:
+		                reader2 = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','arr_time','dep_time','last_bus','ID','direction','service_no'])
+		                for row in reader2:
+		                        if row['stop_no'] not in busStop and row['stop_no'] not in unknown:
+		                                unknown.append(row['stop_no'])
+	os.chdir('../')
+
+	return unknown
+
+"""
+----------------------------------------------------------------------------------------------------
+"""
 
 """
 --------------------------------Add the unknown stops to the graph---------------------------------------------
@@ -162,11 +198,11 @@ def read_bus_stop_file(filename):
 ------------------------------------add MRT stations as nodes-----------------------------------------
 """
 def add_MRT():
-	del lines['PB']
-	del lines['PW'] 
+	del lines['BP']
+	del lines['PW']
 	del lines['PE']
-	del lines['SW']  
-	del lines['SE'] 
+	del lines['SW']
+	del lines['SE']
 	for line in lines:
 		#print line
 		for station in lines[line]:
@@ -181,16 +217,6 @@ def add_MRT():
 					mrts[mrt_name]['Location'] = station['Info1']
 					mrts[mrt_name]["Longitude"] = station['Long']
 					mrts[mrt_name]["Latitude"] = station['Lat']
-
-	mrts['Punggol PTC'] = dict()
-	mrts['Punggol PTC']['Location'] = 'PTC'
-	mrts['Punggol PTC']["Longitude"] = mrts['Punggol NE']["Longitude"]
-	mrts['Punggol PTC']["Latitude"] = mrts['Punggol NE']["Latitude"] 
-
-	mrts['Sengkang STC'] = dict()
-	mrts['Sengkang STC']['Location'] = 'STC'
-	mrts['Sengkang STC']["Longitude"] = mrts['Sengkang NE']["Longitude"]
-	mrts['Sengkang STC']["Latitude"] = mrts['Sengkang NE']["Latitude"]
 	
 """
 ----------------------------------------------------------------------------------------------------
@@ -202,7 +228,7 @@ def add_MRT():
 def read_route_file(filename, g):
 	global services
 	with open (filename) as route:
-		reader = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','arr_time','dep_time','last_bus','ID','direction','service_no'])
+		reader = csv.DictReader(route,fieldnames=['1','stop_no','distance','express','first_bus','dep_time','last_bus','ID','direction','service_no'])
 		for current_row, next_row in current_and_next(reader):
 			if current_row['stop_no'].isdigit() and len(current_row['stop_no']) == 4:
 				current_row['stop_no'] = '0' + current_row['stop_no']
@@ -224,7 +250,22 @@ def read_route_file(filename, g):
 						dist = float(next_row['distance']) - float(current_row['distance'])
 						g.ep.Distance[edge] = float(round(dist,2))
 						g.ep.Method[edge] = current_row['service_no']
-						
+						if current_row['first_bus'].isdigit():
+							arr_time1 = int(current_row['first_bus'])
+							arr_time2 = int(next_row['first_bus'])
+							min2 = arr_time2/100*60 + arr_time2%100
+							min1 = arr_time1/100*60 + arr_time1%100
+						elif current_row['last_bus'].isdigit():
+							arr_time1 = int(current_row['last_bus'])
+							arr_time2 = int(next_row['last_bus'])
+							min2 = arr_time2/100*60 + arr_time2%100
+							min1 = arr_time1/100*60 + arr_time1%100
+						else:
+							arr_time1 = int(current_row['dep_time'])
+							arr_time2 = int(next_row['dep_time'])
+							min2 = arr_time2/100*60 + arr_time2%100
+							min1 = arr_time1/100*60 + arr_time1%100
+						g.ep.Time[edge] = (min2 - min1) * 2
 					else:
 						edge = g.edge(a,b)
 						g.ep.Method[edge] += ' ' + current_row['service_no']
@@ -242,6 +283,22 @@ def read_route_file(filename, g):
 						dist = float(next_row['distance']) - float(stop1['distance'])
 						g.ep.Distance[edge] = float(round(dist,2))
 						g.ep.Method[edge] = current_row['service_no']
+						if stop1['first_bus'].isdigit():
+							arr_time1 = int(stop1['first_bus'])
+							arr_time2 = int(next_row['first_bus'])
+							min2 = arr_time2/100*60 + arr_time2%100
+							min1 = arr_time1/100*60 + arr_time1%100
+						elif stop1['last_bus'].isdigit():
+							arr_time1 = int(stop1['last_bus'])
+							arr_time2 = int(next_row['last_bus'])
+							min2 = arr_time2/100*60 + arr_time2%100
+							min1 = arr_time1/100*60 + arr_time1%100
+						else:
+							arr_time1 = int(stop1['dep_time'])
+							arr_time2 = int(next_row['dep_time'])
+							min2 = arr_time2/100*60 + arr_time2%100
+							min1 = arr_time1/100*60 + arr_time1%100
+						g.ep.Time[edge] = (min2 - min1) * 2
 						
 					else:
 						edge = g.edge(a,b)
@@ -275,10 +332,12 @@ def connect_bus_MRT(graph):
 					
 				edge1 = graph.add_edge(nodes[mrt]['Index'],nodes[bus]['Index'])
 				edge2 = graph.add_edge(nodes[bus]['Index'],nodes[mrt]['Index'])
-				graph.ep.Distance[edge1] = dist
+				graph.ep.Distance[edge1] = dist * 1.5
 				graph.ep.Method[edge1] = 'Walking'
-				graph.ep.Distance[edge2] = dist
+				graph.ep.Time[edge1] = round(dist*1.5/5*60,3)
+				graph.ep.Distance[edge2] = dist * 1.5
 				graph.ep.Method[edge2] = 'Walking'
+				graph.ep.Time[edge2] = round(dist*1.5/5*60,3)
 	return graph	
 
 """
@@ -338,53 +397,7 @@ def connect_MRT(graph):
 	graph.ep.Distance[edge] = dist
 	graph.ep.Method[edge] = 'MRT'
 
-	edge = graph.add_edge(nodes['Punggol PTC']['Index'],nodes['Sam Kee PW']['Index'])
-	lon1 = float(nodes['Punggol PTC']['Longitude'])
-	lat1 = float(nodes['Punggol PTC']['Latitude'])
-	lon2 = float(nodes['Sam Kee PW']['Longitude'])
-	lat2 = float(nodes['Sam Kee PW']['Latitude'])
-	dist = round(haversine(lon1, lat1, lon2, lat2),3)
-	graph.ep.Distance[edge] = dist
-	graph.ep.Method[edge] = 'MRT'
-	edge = graph.add_edge(nodes['Sam Kee PW']['Index'],nodes['Punggol PTC']['Index'])
-	graph.ep.Distance[edge] = dist
-	graph.ep.Method[edge] = 'MRT'
 
-	edge = graph.add_edge(nodes['Punggol PTC']['Index'],nodes['Cove PE']['Index'])
-	lon1 = float(nodes['Punggol PTC']['Longitude'])
-	lat1 = float(nodes['Punggol PTC']['Latitude'])
-	lon2 = float(nodes['Cove PE']['Longitude'])
-	lat2 = float(nodes['Cove PE']['Latitude'])
-	dist = round(haversine(lon1, lat1, lon2, lat2),3)
-	graph.ep.Distance[edge] = dist
-	graph.ep.Method[edge] = 'MRT'
-	edge = graph.add_edge(nodes['Cove PE']['Index'],nodes['Punggol PTC']['Index'])
-	graph.ep.Distance[edge] = dist
-	graph.ep.Method[edge] = 'MRT'
-
-	edge = graph.add_edge(nodes['Sengkang STC']['Index'],nodes['Cheng Lim SW']['Index'])
-	lon1 = float(nodes['Sengkang STC']['Longitude'])
-	lat1 = float(nodes['Sengkang STC']['Latitude'])
-	lon2 = float(nodes['Cheng Lim SW']['Longitude'])
-	lat2 = float(nodes['Cheng Lim SW']['Latitude'])
-	dist = round(haversine(lon1, lat1, lon2, lat2),3)
-	graph.ep.Distance[edge] = dist
-	graph.ep.Method[edge] = 'MRT'
-	edge = graph.add_edge(nodes['Cheng Lim SW']['Index'],nodes['Sengkang STC']['Index'])
-	graph.ep.Distance[edge] = dist
-	graph.ep.Method[edge] = 'MRT'
-
-	edge = graph.add_edge(nodes['Sengkang STC']['Index'],nodes['Compassvale SE']['Index'])
-	lon1 = float(nodes['Sengkang STC']['Longitude'])
-	lat1 = float(nodes['Sengkang STC']['Latitude'])
-	lon2 = float(nodes['Compassvale SE']['Longitude'])
-	lat2 = float(nodes['Compassvale SE']['Latitude'])
-	dist = round(haversine(lon1, lat1, lon2, lat2),3)
-	graph.ep.Distance[edge] = dist
-	graph.ep.Method[edge] = 'MRT'
-	edge = graph.add_edge(nodes['Compassvale SE']['Index'],nodes['Sengkang STC']['Index'])
-	graph.ep.Distance[edge] = dist
-	graph.ep.Method[edge] = 'MRT'
 
 	edge = graph.add_edge(nodes['Paya Lebar CC']['Index'],nodes['Paya Lebar EW']['Index'])
 	graph.ep.Distance[edge] = 0
@@ -505,26 +518,120 @@ def connect_MRT(graph):
 	graph.ep.Distance[edge] = 0
 	graph.ep.Method[edge] = 'Transfer'
 
-	edge = graph.add_edge(nodes['Choa Chu Kang NS']['Index'],nodes['Choa Chu Kang BP']['Index'])
-	graph.ep.Distance[edge] = 0
-	graph.ep.Method[edge] = 'Transfer'
-	edge = graph.add_edge(nodes['Choa Chu Kang BP']['Index'],nodes['Choa Chu Kang NS']['Index'])
-	graph.ep.Distance[edge] = 0
-	graph.ep.Method[edge] = 'Transfer'
 
-	edge = graph.add_edge(nodes['Sengkang NE']['Index'],nodes['Sengkang STC']['Index'])
-	graph.ep.Distance[edge] = 0
-	graph.ep.Method[edge] = 'Transfer'
-	edge = graph.add_edge(nodes['Sengkang STC']['Index'],nodes['Sengkang NE']['Index'])
-	graph.ep.Distance[edge] = 0
-	graph.ep.Method[edge] = 'Transfer'
+	for e in graph.edges():
+		graph.ep.Time[e] = 2
 
-	edge = graph.add_edge(nodes['Punggol NE']['Index'],nodes['Punggol PTC']['Index'])
-	graph.ep.Distance[edge] = 0
-	graph.ep.Method[edge] = 'Transfer'
-	edge = graph.add_edge(nodes['Punggol PTC']['Index'],nodes['Punggol NE']['Index'])
-	graph.ep.Distance[edge] = 0
-	graph.ep.Method[edge] = 'Transfer'
+	edge = graph.edge(nodes['Jurong East NS']['Index'],nodes['Bukit Batok NS']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Bukit Batok NS']['Index'],nodes['Jurong East NS']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Bukit Gombak NS']['Index'],nodes['Choa Chu Kang NS']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Choa Chu Kang NS']['Index'],nodes['Bukit Gombak NS']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Yew Tee NS']['Index'],nodes['Kranji NS']['Index'])
+	graph.ep.Time[edge] = 4
+	edge = graph.edge(nodes['Kranji NS']['Index'],nodes['Yew Tee NS']['Index'])
+	graph.ep.Time[edge] = 4
+
+	edge = graph.edge(nodes['Admiralty NS']['Index'],nodes['Sembawang NS']['Index'])
+	graph.ep.Time[edge] = 5
+	edge = graph.edge(nodes['Sembawang NS']['Index'],nodes['Admiralty NS']['Index'])
+	graph.ep.Time[edge] = 5
+
+	edge = graph.edge(nodes['Khatib NS']['Index'],nodes['Yio Chu Kang NS']['Index'])
+	graph.ep.Time[edge] = 5
+	edge = graph.edge(nodes['Yio Chu Kang NS']['Index'],nodes['Khatib NS']['Index'])
+	graph.ep.Time[edge] = 5
+
+	edge = graph.edge(nodes['Ang Mo Kio NS']['Index'],nodes['Bishan NS']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Bishan NS']['Index'],nodes['Ang Mo Kio NS']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Somerset NS']['Index'],nodes['Dhoby Ghaut NS']['Index'])
+	graph.ep.Time[edge] = 1
+	edge = graph.edge(nodes['Dhoby Ghaut NS']['Index'],nodes['Somerset NS']['Index'])
+	graph.ep.Time[edge] = 1
+
+	edge = graph.edge(nodes['Bartley CC']['Index'],nodes['Serangoon CC']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Serangoon CC']['Index'],nodes['Bartley CC']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Bishan CC']['Index'],nodes['Marymount CC']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Marymount CC']['Index'],nodes['Bishan CC']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Botanic Gardens CC']['Index'],nodes['Caldecott CC']['Index'])
+	graph.ep.Time[edge] = 5
+	edge = graph.edge(nodes['Caldecott CC']['Index'],nodes['Botanic Gardens CC']['Index'])
+	graph.ep.Time[edge] = 5
+
+	edge = graph.edge(nodes['Farrer Road CC']['Index'],nodes['Holland Village CC']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Holland Village CC']['Index'],nodes['Farrer Road CC']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Pasir Panjang CC']['Index'],nodes['Labrador Park CC']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Labrador Park CC']['Index'],nodes['Pasir Panjang CC']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Bayfront CE']['Index'],nodes['Marina Bay CE']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Marina Bay CE']['Index'],nodes['Bayfront CE']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['HarbourFront NE']['Index'],nodes['Outram Park NE']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Outram Park NE']['Index'],nodes['HarbourFront NE']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Serangoon NE']['Index'],nodes['Kovan NE']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Kovan NE']['Index'],nodes['Serangoon NE']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Hougang NE']['Index'],nodes['Buangkok NE']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Buangkok NE']['Index'],nodes['Hougang NE']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Sengkang NE']['Index'],nodes['Punggol NE']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Punggol NE']['Index'],nodes['Sengkang NE']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Pasir Ris EW']['Index'],nodes['Tampines EW']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Tampines EW']['Index'],nodes['Pasir Ris EW']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Simei EW']['Index'],nodes['Tanah Merah EW']['Index'])
+	graph.ep.Time[edge] = 3
+	edge = graph.edge(nodes['Tanah Merah EW']['Index'],nodes['Simei EW']['Index'])
+	graph.ep.Time[edge] = 3
+
+	edge = graph.edge(nodes['Clementi EW']['Index'],nodes['Jurong East EW']['Index'])
+	graph.ep.Time[edge] = 4
+	edge = graph.edge(nodes['Jurong East EW']['Index'],nodes['Clementi EW']['Index'])
+	graph.ep.Time[edge] = 4
+
+	edge = graph.edge(nodes['Tanah Merah EW']['Index'],nodes['Expo CG']['Index'])
+	graph.ep.Time[edge] = 4
+	edge = graph.edge(nodes['Expo CG']['Index'],nodes['Tanah Merah EW']['Index'])
+	graph.ep.Time[edge] = 4
+
+	edge = graph.edge(nodes['Changi Airport CG']['Index'],nodes['Expo CG']['Index'])
+	graph.ep.Time[edge] = 9
+	edge = graph.edge(nodes['Expo CG']['Index'],nodes['Changi Airport CG']['Index'])
+	graph.ep.Time[edge] = 9
+
 
 	return graph
 
@@ -595,11 +702,13 @@ def connect_post_code(graph):
 			dist = round(haversine(lon1,lat1,lon2,lat2),3)
 			if dist < 0.2:
 				edge = graph.add_edge(nodes[item]['Index'],nodes[stop]['Index'])
-				graph.ep.Distance[edge] = dist
+				graph.ep.Distance[edge] = dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
+				graph.ep.Time[edge] = round(dist/5*60,3)
 				edge = graph.add_edge(nodes[stop]['Index'],nodes[item]['Index'])
-				graph.ep.Distance[edge] = dist
+				graph.ep.Distance[edge] = dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
+				graph.ep.Time[edge] = round(dist/5*60,3)
 				connected += 1
 			elif dist < min_dist:
 				min_dist = dist
@@ -610,65 +719,35 @@ def connect_post_code(graph):
 			dist = round(haversine(lon1,lat1,lon2,lat2),3)
 			if dist < 0.2:
 				edge = graph.add_edge(nodes[item]['Index'],nodes[mrt]['Index'])
-				graph.ep.Distance[edge] = dist
+				graph.ep.Distance[edge] = dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
+				graph.ep.Time[edge] = round(dist*1.5/5*60,3)
 				edge = graph.add_edge(nodes[mrt]['Index'],nodes[item]['Index'])
-				graph.ep.Distance[edge] = dist
+				graph.ep.Distance[edge] = dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
+				graph.ep.Time[edge] = round(dist*1.5/5*60,3)
 				connected += 1
 			elif dist < min_dist:
 				min_dist = dist
 				min_stn = mrt
 		if connected == 0:
 				edge = graph.add_edge(nodes[item]['Index'],nodes[min_stn]['Index'])
-				graph.ep.Distance[edge] = min_dist
+				graph.ep.Distance[edge] = min_dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
+				graph.ep.Time[edge] = round(min_dist*1.5/5*60,3)
 				edge = graph.add_edge(nodes[min_stn]['Index'],nodes[item]['Index'])
-				graph.ep.Distance[edge] = min_dist
+				graph.ep.Distance[edge] = min_dist * 1.5
 				graph.ep.Method[edge] = 'Walking'
+				graph.ep.Time[edge] = round(min_dist*1.5/5*60,3)
 
 	return graph
-"""
-----------------------------------------------------------------------------------------------------
-"""	
-"""
------------------------------Calculate Centrality--------------------------
-"""	
-def calculate_centrality(graph):
-	cl_unweighted = gt.closeness(graph)
-	cl_distance = gt.closeness(graph,weight=graph.ep.Distance)
-	bt_unweighted, ep = gt.betweenness(graph)
-	bt_distance, ep = gt.betweenness(graph,weight=graph.ep.Distance)
-
-	f = open('cl_unweighted.txt', 'w+')
-	f = open('cl_unweighted.txt', 'r+')
-	f.writelines(["%s\n" % item  for item in cl_unweighted.a])
-	f = open('cl_distance.txt', 'w+')
-	f = open('cl_distance.txt', 'r+')
-	f.writelines(["%s\n" % item  for item in cl_distance.a])
-	f = open('bt_unweighted.txt', 'w+')
-	f = open('bt_unweighted.txt', 'r+')
-	f.writelines(["%s\n" % item  for item in bt_unweighted.a])
-	f = open('bt_distance.txt', 'w+')
-	f = open('bt_distance.txt', 'r+')
-	f.writelines(["%s\n" % item  for item in bt_distance.a])
-
-	with open('results.csv','wb') as results:
-		writer = csv.writer(results,delimiter=',')
-		header = ['Name','Type','Longitude','Latitude','Closeness_Unweighted','Closeness_Distance','Betweenness_Unweighted','Betweenness_Distance']
-		writer.writerow(header)
-		for v in graph.vertices():
-			row = [graph.vp.name[v],graph.vp.Type[v],graph.vp.Longitude[v],graph.vp.Latitude[v],cl_unweighted[v],cl_distance[v],bt_unweighted[v],bt_distance[v]]
-			writer.writerow(row)
-
-
 """
 ----------------------------------------------------------------------------------------------------
 """	
 
 if __name__ == '__main__':
 	
-	unknown = read_bus_stop_file('info.csv')
+	unknown =read_bus_stop_file('info.csv')
 	#print sorted(lines['NS'],key=lambda k: k['Location'])
 	add_unknown_node(unknown)
 	add_MRT()
@@ -686,9 +765,8 @@ if __name__ == '__main__':
 	for stop in delete_stop:
 		del bus_stops[stop]
 
-
 	graph = init_graph()
-
+	graph = connect_MRT(graph)
 	os.chdir('./SBST')
 	for file_name in os.listdir(os.getcwd()):
 		if file_name.endswith('.csv'):
@@ -700,10 +778,7 @@ if __name__ == '__main__':
 	os.chdir('../')
 
 	
-	graph = connect_MRT(graph)
 	graph = connect_bus_MRT(graph)
 	graph = connect_post_code(graph)
-
-	graph.save('sg_graph.graphml')
-
-	calculate_centrality(graph)
+	os.chdir('./all_results')
+	graph.save('graph_time_no_lrt.graphml')
