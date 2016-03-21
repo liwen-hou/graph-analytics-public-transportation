@@ -64,6 +64,11 @@ def read_bus_stop_file(filename):
 ------------------------------------add MRT stations as nodes-----------------------------------------
 """
 def add_MRT():
+	del lines['BP']
+	del lines['PW']
+	del lines['PE']
+	del lines['SW']
+	del lines['SE']
 	for line in lines:
 		#print line
 		for station in lines[line]:
@@ -79,15 +84,6 @@ def add_MRT():
 					mrts[mrt_name]["Longitude"] = station['Long']
 					mrts[mrt_name]["Latitude"] = station['Lat']
 
-	mrts['Punggol PTC'] = dict()
-	mrts['Punggol PTC']['Location'] = 'PTC'
-	mrts['Punggol PTC']["Longitude"] = mrts['Punggol NE']["Longitude"]
-	mrts['Punggol PTC']["Latitude"] = mrts['Punggol NE']["Latitude"] 
-
-	mrts['Sengkang STC'] = dict()
-	mrts['Sengkang STC']['Location'] = 'STC'
-	mrts['Sengkang STC']["Longitude"] = mrts['Sengkang NE']["Longitude"]
-	mrts['Sengkang STC']["Latitude"] = mrts['Sengkang NE']["Latitude"]
 	
 """
 ----------------------------------------------------------------------------------------------------
@@ -108,7 +104,7 @@ if __name__ == '__main__':
 	# 		add_post_code(file_name)
 	# os.chdir('../')
 	os.chdir('./all_results')
-	with open ('results_time.csv') as result:
+	with open ('results_time_adjusted.csv') as result:
 		reader = csv.DictReader(result)
 		for row in reader:
 			if row['Type'] == 'Post Code':
