@@ -350,7 +350,7 @@ def connect_MRT(graph,temp):
 
 	os.chdir('./MRT')
 	for file_name in os.listdir(os.getcwd()):
-		if file_name == (temp + '.csv'):
+		if file_name == (temp + '.csv') or (temp == 'EW' and file_name == 'CG.csv') or (temp == 'CC' and file_name == 'CE.csv'):
 			with open (file_name) as mrt_route:
 				reader = csv.DictReader(mrt_route,fieldnames=['name','seq'])
 				for current_row, next_row in current_and_next(reader):
