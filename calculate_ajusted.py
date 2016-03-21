@@ -30,21 +30,21 @@ if __name__ == '__main__':
 	print 'graph loaded'
 	for e in graph.edges():
 		if graph.ep.Time[e] < 0:
-			if graph.ep.Time[e] == -7 and graph.ep.Distance[e] == 15.3:
+			if graph.ep.Time[e] == -14 and graph.ep.Distance[e] == 15.3:
 				graph.ep.Time[e] = 19
-			elif graph.ep.Time[e] == -32 and graph.ep.Distance[e] == 6.5:
+			elif graph.ep.Time[e] == -64 and graph.ep.Distance[e] == 6.5:
 				graph.ep.Time[e] = 30
-			elif graph.ep.Time[e] == -9 and graph.ep.Distance[e] == 7.4:
+			elif graph.ep.Time[e] == -18 and graph.ep.Distance[e] == 7.4:
 				graph.ep.Time[e] = 13
-			elif graph.ep.Time[e] == -24 and graph.ep.Distance[e] == 9.3:
+			elif graph.ep.Time[e] == -48 and graph.ep.Distance[e] == 9.3:
 				graph.ep.Time[e] = 14
-			elif graph.ep.Time[e] == -6 and graph.ep.Distance[e] == 4.7:
+			elif graph.ep.Time[e] == -12 and graph.ep.Distance[e] == 4.7:
 				graph.ep.Time[e] = 7
-			elif graph.ep.Time[e] == -30 and graph.ep.Distance[e] == 7.1:
+			elif graph.ep.Time[e] == -60 and graph.ep.Distance[e] == 7.1:
 				graph.ep.Time[e] = 22
-			elif graph.ep.Time[e] == -1 and graph.ep.Distance[e] == 4.3:
+			elif graph.ep.Time[e] == -2 and graph.ep.Distance[e] == 4.3:
 				graph.ep.Time[e] = 6
-			elif graph.ep.Time[e] == -7 and graph.ep.Distance[e] == 5.3:
+			elif graph.ep.Time[e] == -14 and graph.ep.Distance[e] == 5.3:
 				graph.ep.Time[e] = 7
 
 			print e, ' ', graph.ep.Time[e], ' ', graph.ep.Method[e],' ', graph.ep.Distance[e]
