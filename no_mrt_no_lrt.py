@@ -266,7 +266,7 @@ def read_route_file(filename, g):
 							arr_time2 = int(next_row['dep_time'])
 							min2 = arr_time2/100*60 + arr_time2%100
 							min1 = arr_time1/100*60 + arr_time1%100
-						g.ep.Time[edge] = (min2 - min1)
+						g.ep.Time[edge] = (min2 - min1) * 2
 					else:
 						edge = g.edge(a,b)
 						g.ep.Method[edge] += ' ' + current_row['service_no']
@@ -299,7 +299,7 @@ def read_route_file(filename, g):
 							arr_time2 = int(next_row['dep_time'])
 							min2 = arr_time2/100*60 + arr_time2%100
 							min1 = arr_time1/100*60 + arr_time1%100
-						g.ep.Time[edge] = (min2 - min1)
+						g.ep.Time[edge] = (min2 - min1) * 2
 						
 					else:
 						edge = g.edge(a,b)
